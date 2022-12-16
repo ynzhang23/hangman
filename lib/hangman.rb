@@ -1,6 +1,6 @@
 require 'pry-byebug'
 require 'erb'
-require 'csv'
+require 'yaml'
 
 class Player
   attr_accessor :lives_left, :name, :guess, :guesses
@@ -28,7 +28,7 @@ class Player
 end
 
 class Word
-  attr_reader :word, :feedback, :feedback_array
+  attr_reader :word, :feedback_array
 
   def initialize
     @word = Word.generate_word
@@ -52,7 +52,7 @@ class Word
 
   def update_feedback(guess)
     result = 'incorrect'
-    # Replace the __ in the @feedback at the corresponding array position with the alphabet 
+    # Replace the __ in the @feedback_array at the corresponding array position with the alphabet 
     @word_array.each_with_index do |letter, index|
       if letter == guess
         @feedback_array[index] = " #{letter} "
@@ -64,8 +64,22 @@ class Word
   end
 end
 
-def save_game
+def save_game(player_name, player_lives_left, player_guesses, word_word, word_feedback_array)
+  # Create a hash of values to be saved
+  data = {
+    name: player_name,
+    lives_left: player_lives_left,
+    guesses: player_guesses,
+    word: word_word,
+    feedback_array: word_feedback_array
+  }
   
+  # Set up file naming system
+  Dir.mkdir('saves') unless Dir.exist?('saves')
+  filename = "#{player_name}.yml"
+
+  # Writing into the file
+  File.open("saves/#{filename}", 'w') {|file| file.write(data.to_yaml)}
 end
 
 def load_game
@@ -87,6 +101,18 @@ puts word.word
 # Loop guess as long as player has more than 0 lives AND feedback_array still has unknown characters
 while player.lives_left > 0 && word.feedback_array.include?(' _ ')
   puts ""
+
+  # Ask if player wants to save a game
+  player_save_choice = ''
+  until player_save_choice == "Y" || player_save_choice == "N"
+    puts "Do you want to save? (Y/N)"
+    player_save_choice = gets.chomp
+  end
+  if player_save_choice == "Y"
+    save_game(player.name, player.lives_left, player.guesses, word.word, word.feedback_array)
+    exit
+  end
+
   # Get player guess
   player.get_guess
 
