@@ -66,7 +66,9 @@ end
 
 puts "
 █░█ ▄▀█ █▄░█ █▀▀ █▀▄▀█ ▄▀█ █▄░█
-█▀█ █▀█ █░▀█ █▄█ █░▀░█ █▀█ █░▀█"
+█▀█ █▀█ █░▀█ █▄█ █░▀░█ █▀█ █░▀█
+
+"
 
 # Initialize player
 player = Player.new
@@ -77,6 +79,7 @@ puts word.word
 
 # Loop guess as long as player has more than 0 lives AND feedback_array still has unknown characters
 while player.lives_left > 0 && word.feedback_array.include?(' _ ')
+  puts ""
   # Get player guess
   player.get_guess
 
@@ -86,7 +89,23 @@ while player.lives_left > 0 && word.feedback_array.include?(' _ ')
   end
 
   # Update player with lives left, their guesses and feedback
+  puts "
+  #{word.feedback_array.join}
+  "
+  puts "================================================================================"
   puts "#{player.name}, you currently have #{player.lives_left} lives left!"
   puts "Guessed: #{player.guesses.join(', ')}"
-  puts "#{word.feedback_array.join}"
+  puts "================================================================================"
+end
+
+if word.feedback_array.include?(' _ ')
+  puts "
+  █▄█ █▀█ █░█   █░░ █▀█ █▀ █▀▀
+  ░█░ █▄█ █▄█   █▄▄ █▄█ ▄█ ██▄
+  "
+else
+  puts "
+  █▄█ █▀█ █░█   █░█░█ █ █▄░█
+  ░█░ █▄█ █▄█   ▀▄▀▄▀ █ █░▀█
+  "
 end
