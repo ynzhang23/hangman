@@ -15,9 +15,12 @@ class Player
   def get_guess()
     # Get Player's guess
     @guess = '.'
-    until @guess.length == 1 && @guess.match?(/^[[:alpha:]]+$/)
+    until @guess.length == 1 && @guess.match?(/^[[:alpha:]]+$/) && !@guesses.include?(@guess)
       puts "Guess an alphabet: "
       @guess = gets.chomp.downcase
+      if @guesses.include?(@guess)
+        puts "You have already guessed that letter."
+      end
     end
     @guesses.push(@guess)
     @guess
@@ -30,7 +33,7 @@ class Word
   def initialize
     @word = Word.generate_word
     @word_array = @word.split('')
-    @feedback_array = Array.new(@word.length, "_")
+    @feedback_array = Array.new(@word.length, " _ ")
   end
 
   def Word.generate_word
@@ -52,14 +55,13 @@ class Word
     # Replace the __ in the @feedback at the corresponding array position with the alphabet 
     @word_array.each_with_index do |letter, index|
       if letter == guess
-        @feedback_array[index] = letter
+        @feedback_array[index] = " #{letter} "
         result = 'correct'
       end
     end
     # If result is incorrect, return
     return result
   end
-
 end
 
 puts "
@@ -73,13 +75,18 @@ player = Player.new
 word = Word.new
 puts word.word
 
-# Get player guess
-player.get_guess
+# Loop guess as long as player has more than 0 lives AND feedback_array still has unknown characters
+while player.lives_left > 0 && word.feedback_array.include?(' _ ')
+  # Get player guess
+  player.get_guess
 
-# Provide feedback
-if word.update_feedback(player.guess) == "incorrect"
-  player.lives_left -= 1
+  # Provide feedback
+  if word.update_feedback(player.guess) == "incorrect"
+    player.lives_left -= 1
+  end
+
+  # Update player with lives left, their guesses and feedback
+  puts "#{player.name}, you currently have #{player.lives_left} lives left!"
+  puts "Guessed: #{player.guesses.join(', ')}"
+  puts "#{word.feedback_array.join}"
 end
-
-# Update player with lives left
-puts "#{player.name}, you currently have #{player.lives_left} lives left!"
