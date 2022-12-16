@@ -131,6 +131,7 @@ while player.lives_left > 0 && word.feedback_array.include?(' _ ')
   puts "================================================================================"
 end
 
+# Output final screen message
 if word.feedback_array.include?(' _ ')
   puts "
   █▄█ █▀█ █░█   █░░ █▀█ █▀ █▀▀
