@@ -3,9 +3,11 @@ require 'erb'
 require 'csv'
 
 class Player
+  attr_accessor :lives_left, :name
+
   def initialize()
     puts "What is your name?"
-    @name = gets
+    @name = gets.chomp
     @lives_left = 7
   end
 end
@@ -35,5 +37,13 @@ puts "
 █░█ ▄▀█ █▄░█ █▀▀ █▀▄▀█ ▄▀█ █▄░█
 █▀█ █▀█ █░▀█ █▄█ █░▀░█ █▀█ █░▀█"
 
-puts word = Word.new
+# Initialize player
+player = Player.new
+
+# Initialize word
+word = Word.new
 puts word.word
+
+# Update player with lives left
+puts "#{player.name}, you currently have #{player.lives_left} lives left!"
+
