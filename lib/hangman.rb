@@ -28,7 +28,7 @@ class Player
 end
 
 class Word
-  attr_accessor :word, :feedback_array
+  attr_accessor :word, :feedback_array, :word_array
 
   def initialize
     @word = Word.generate_word
@@ -64,13 +64,14 @@ class Word
   end
 end
 
-def save_game(player_name, player_lives_left, player_guesses, word_word, word_feedback_array)
+def save_game(player_name, player_lives_left, player_guesses, word_word, word_word_array, word_feedback_array)
   # Create a hash of values to be saved
   data = {
     name: player_name,
     lives_left: player_lives_left,
     guesses: player_guesses,
     word: word_word,
+    word_array: word_word_array,
     feedback_array: word_feedback_array
   }
   
@@ -125,13 +126,13 @@ saved_file = load_game()
 if saved_file == "does not exist"
   puts "There #{saved_file} a save file under that name."
   puts "Continuing current game..."
-elsif saved_file == nil
+elsif saved_file.is_a? Hash
   player.name = saved_file[:name]
   player.lives_left = saved_file[:lives_left]
   player.guesses = saved_file[:guesses]
   word.word = saved_file[:word]
+  word.word_array = saved_file[:word_array]
   word.feedback_array = saved_file[:feedback_array]
-  puts word.feedback_array
 end
 
 # Loop guess as long as player has more than 0 lives AND feedback_array still has unknown characters
@@ -145,14 +146,12 @@ while player.lives_left > 0 && word.feedback_array.include?(' _ ')
     player_save_choice = gets.chomp
   end
   if player_save_choice == "Y"
-    save_game(player.name, player.lives_left, player.guesses, word.word, word.feedback_array)
+    save_game(player.name, player.lives_left, player.guesses, word.word, word.word_array, word.feedback_array)
     exit
   end
 
   # Get player guess
   player.get_guess
-
-  binding.pry
 
   # Provide feedback
   if word.update_feedback(player.guess) == "incorrect"
