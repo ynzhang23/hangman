@@ -137,7 +137,13 @@ end
 
 # Loop guess as long as player has more than 0 lives AND feedback_array still has unknown characters
 while player.lives_left > 0 && word.feedback_array.include?(' _ ')
-  puts ""
+  puts "
+  #{word.feedback_array.join}
+  "
+  puts "================================================================================"
+  puts "#{player.name}, you currently have #{player.lives_left} lives left!"
+  puts "Guessed: #{player.guesses.join(', ')}"
+  puts "================================================================================"
 
   # Ask if player wants to save a game
   player_save_choice = ''
