@@ -28,7 +28,7 @@ class Player
 end
 
 class Word
-  attr_reader :word, :feedback_array
+  attr_accessor :word, :feedback_array
 
   def initialize
     @word = Word.generate_word
@@ -82,7 +82,27 @@ def save_game(player_name, player_lives_left, player_guesses, word_word, word_fe
   File.open("saves/#{filename}", 'w') {|file| file.write(data.to_yaml)}
 end
 
-def load_game
+def load_game()
+  # Ask if player wants to load saved games
+  player_load_choice =  "."
+  until player_load_choice == "Y" || player_load_choice == "N"
+    puts "Do you want to load a saved game? (Y/N)"
+    player_load_choice = gets.chomp.upcase
+  end
+  if player_load_choice == "N"
+    return nil
+  else
+  # Getting player name
+  puts "What name did you save the game under (case sensitive)?"
+  player_name = gets.chomp
+  filename = "#{player_name}.yml"
+    # If there is no save file
+    unless File.exists?("saves/#{filename}")
+      return "does not exist"
+    else
+      return YAML.load(File.read("saves/#{filename}"))
+    end
+  end
 end
 
 puts "
@@ -98,6 +118,22 @@ player = Player.new
 word = Word.new
 puts word.word
 
+# Ask to load saved game
+saved_file = load_game()
+
+# Subbing in saved data
+if saved_file == "does not exist"
+  puts "There #{saved_file} a save file under that name."
+  puts "Continuing current game..."
+elsif saved_file == nil
+  player.name = saved_file[:name]
+  player.lives_left = saved_file[:lives_left]
+  player.guesses = saved_file[:guesses]
+  word.word = saved_file[:word]
+  word.feedback_array = saved_file[:feedback_array]
+  puts word.feedback_array
+end
+
 # Loop guess as long as player has more than 0 lives AND feedback_array still has unknown characters
 while player.lives_left > 0 && word.feedback_array.include?(' _ ')
   puts ""
@@ -105,7 +141,7 @@ while player.lives_left > 0 && word.feedback_array.include?(' _ ')
   # Ask if player wants to save a game
   player_save_choice = ''
   until player_save_choice == "Y" || player_save_choice == "N"
-    puts "Do you want to save? (Y/N)"
+    puts "Save and exit? (Y/N)"
     player_save_choice = gets.chomp
   end
   if player_save_choice == "Y"
@@ -115,6 +151,8 @@ while player.lives_left > 0 && word.feedback_array.include?(' _ ')
 
   # Get player guess
   player.get_guess
+
+  binding.pry
 
   # Provide feedback
   if word.update_feedback(player.guess) == "incorrect"
