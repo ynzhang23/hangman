@@ -1,5 +1,3 @@
-require 'pry-byebug'
-require 'erb'
 require 'yaml'
 
 class Player
@@ -117,7 +115,6 @@ player = Player.new
 
 # Initialize word
 word = Word.new
-puts word.word
 
 # Ask to load saved game
 saved_file = load_game()
